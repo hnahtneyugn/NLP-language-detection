@@ -8,13 +8,13 @@ working_dir = os.path.expanduser("~/projects/NLP/NLP-language-detection/data")
 langs = {"ara": "ar", "deu": "de", "eng": "en", "fra": "fr", "rus": "ru", "vie": "vi", "lao": "lo"}
 
 
-for lang in langs[:-1]:
-    with open(f"{working_dir}/{lang}_news_2019_10K/{lang}_news_2019_10K-sentences.txt") as file:
+for lang in list(langs.keys())[:-1]:
+    with open(f"{working_dir}/{lang}_news_2019_300K/{lang}_news_2019_300K-sentences.txt") as file:
         lines = file.readlines()
 
     sentences = [line.strip().split(sep="\t", maxsplit=1)[1]  for line in lines]
 
-    df = pd.DataFrame(data=sentences[:9000], columns=["text"])
+    df = pd.DataFrame(data=sentences[:240000], columns=["text"])
 
     # Remove unicode control characters like U+200E
     df['text'] = df['text'].apply(lambda x: ''.join(
@@ -28,7 +28,7 @@ for lang in langs[:-1]:
     # Write data to train set
     df.to_csv(f"{working_dir}/clean_data/train.txt", mode='a', index=False, header=False, columns=["text", "label"], sep="\t", quoting=csv.QUOTE_NONE)
 
-    df_test = pd.DataFrame(data=sentences[9000:], columns=["text"])
+    df_test = pd.DataFrame(data=sentences[240000:], columns=["text"])
 
     # Remove unicode control characters like U+200E
     df_test['text'] = df_test['text'].apply(lambda x: ''.join(
@@ -43,6 +43,6 @@ for lang in langs[:-1]:
 # Create true label file
 with open(f"{working_dir}/clean_data/test_labels.txt", "w", encoding="utf-8") as f:
     for lang in langs:
-        for _ in range(1000):
+        for _ in range(60000):
             f.write(f"{langs[lang]}\n")
 
